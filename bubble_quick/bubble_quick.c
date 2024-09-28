@@ -10,6 +10,8 @@ typedef struct prato_{
 
 void swap(Prato *a, Prato *b);
 void bubble_sort(Prato *cardapio, int k);
+void quicksort(Prato *cardapio, int k, int inicio, int fim);
+int mediana(int a, int b, int c, Prato* cardapio);
 void print_cardapio(Prato *cardapio, int k);
 
 
@@ -59,8 +61,8 @@ a escolha do pivo é importante
 */
 void quick_sort(Prato *cardapio, int k, int inicio, int fim){
     int i = inicio; 
-    int j = fim; 
-    int pivo = cardapio[(inicio+fim)/2].prioridade; 
+    int j = fim;
+    int pivo = mediana(inicio, (inicio+fim)/2, fim, cardapio);
     do {
         while (cardapio[i].prioridade < pivo) i++; 
         while (cardapio[j].prioridade > pivo) j--; 
@@ -69,6 +71,17 @@ void quick_sort(Prato *cardapio, int k, int inicio, int fim){
 
     } while (i < j); 
 
+}
+
+int mediana(int a, int b, int c, Prato* cardapio){ // retorna o indice do pivo mas só mudar se não precisar
+        int x=cardapio[a].prioridade, y=cardapio[b].prioridade, z=cardapio[c].prioridade;
+
+        if((x>=y && x<=z)||(x<=y && x>=z))
+            return a;
+        else if((y>=x && y<=z)||(y<=x && y>=z))
+            return b;
+        else
+            return c;
 }
 
 void print_cardapio(Prato *cardapio, int k){
