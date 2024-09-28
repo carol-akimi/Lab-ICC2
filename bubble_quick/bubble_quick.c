@@ -64,6 +64,7 @@ void quick_sort(Prato *cardapio, int k, int inicio, int fim){
     do {
         while (cardapio[i].prioridade < pivo) i++; 
         while (cardapio[j].prioridade > pivo) j--; 
+        
 
 
     } while (i < j); 
