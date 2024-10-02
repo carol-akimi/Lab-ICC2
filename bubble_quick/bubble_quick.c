@@ -1,6 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
-#include <string.h> 
+#include <string.h>
+#include <time.h>
 
 typedef struct prato_{
     int prioridade; 
@@ -10,9 +11,8 @@ typedef struct prato_{
 
 void swap(Prato *a, Prato *b);
 void bubble_sort(Prato *cardapio, int k);
-void quicksort(Prato *cardapio, int k, int inicio, int fim);
+void quick_sort(Prato *cardapio, int inicio, int fim);
 int mediana(int a, int b, int c, Prato* cardapio);
-void quick_sort(Prato *cardapio, int inicio, int fim); 
 void print_cardapio(Prato *cardapio, int k);
 
 
@@ -27,9 +27,23 @@ int main (void){
     for (int i = 0; i < k; i++){
         scanf("%d %d %s", &cardapio[i].prioridade, &cardapio[i].tempo, cardapio[i].nome); 
     }
-    //bubble_sort(cardapio, k); 
-    quick_sort(cardapio, 0, k-1); 
-    print_cardapio(cardapio, k); 
+
+    clock_t i1, f1, i2, f2;
+    i1=clock();
+    //bubble_sort(cardapio, k);
+    f1=clock();
+
+    i2=clock();
+    quick_sort(cardapio, 0, k-1);
+    f2=clock();
+
+    printf("\n");
+    print_cardapio(cardapio, k);
+
+    printf("\nBubble sort: %lf s\n", (double)(f1-i1)/CLOCKS_PER_SEC);
+    printf("Quicksort: %lf s\n", (double)(f2-i2)/CLOCKS_PER_SEC);
+
+    return 0;
 }
 
 void swap(Prato *a, Prato *b){
@@ -64,11 +78,10 @@ a escolha do pivo é importante, uso da mediana
 void quick_sort(Prato *cardapio, int inicio, int fim){
     int i = inicio; 
     int j = fim;
-    int pivo = cardapio[mediana(inicio, (inicio+fim)/2, fim, cardapio)].prioridade;
-    //int pivo_tempo = cardapio[mediana(inicio, (inicio+fim)/2, fim, cardapio)].tempo; 
+    Prato pivo = cardapio[mediana(inicio, (inicio+fim)/2, fim, cardapio)];
     do {
-        while (cardapio[i].prioridade < pivo) i++; 
-        while (cardapio[j].prioridade > pivo) j--; 
+        while (cardapio[i].prioridade < pivo.prioridade || (cardapio[i].prioridade==pivo.prioridade && cardapio[i].tempo>pivo.tempo)) i++; 
+        while (cardapio[j].prioridade > pivo.prioridade || (cardapio[j].prioridade==pivo.prioridade && cardapio[j].tempo<pivo.tempo)) j--; 
         if (i <= j){
             swap(&cardapio[i], &cardapio[j]); 
             i++;
