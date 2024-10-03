@@ -1,6 +1,5 @@
 #include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h>
+#include <stdlib.h>
 #include <time.h>
 
 typedef struct prato_{
@@ -8,6 +7,7 @@ typedef struct prato_{
     int tempo; 
     char nome[51]; 
 }Prato; 
+
 
 void swap(Prato *a, Prato *b);
 void bubble_sort(Prato *cardapio, int k);
@@ -17,12 +17,14 @@ void print_cardapio(Prato *cardapio, int k);
 
 
 int main (void){
-    //Quantidade dos pratos 
+    //Quantidade de pratos 
     int k; 
-    scanf("%d", &k); 
+    scanf("%d", &k);
+
     //Alocação do vetor cardapio para armazenar os pratos 
-    Prato *cardapio; 
+    Prato *cardapio;
     cardapio = (Prato*) malloc(sizeof(Prato)*k); 
+
     //Leitura dos dados 
     for (int i = 0; i < k; i++){
         scanf("%d %d %s", &cardapio[i].prioridade, &cardapio[i].tempo, cardapio[i].nome); 
@@ -30,21 +32,24 @@ int main (void){
 
     clock_t i1, f1, i2, f2;
     i1=clock();
-    //bubble_sort(cardapio, k);
+    bubble_sort(cardapio, k);
     f1=clock();
 
     i2=clock();
-    quick_sort(cardapio, 0, k-1);
+    //quick_sort(cardapio, 0, k-1);
     f2=clock();
 
     printf("\n");
     print_cardapio(cardapio, k);
 
-    printf("\nBubble sort: %lf s\n", (double)(f1-i1)/CLOCKS_PER_SEC);
-    printf("Quicksort: %lf s\n", (double)(f2-i2)/CLOCKS_PER_SEC);
+    free(cardapio);
+
+    printf("\n\nTempo do Bubble Sort para %d elementos: %lf s\n", k, (double)(f1-i1)/CLOCKS_PER_SEC);
+    //printf("\nTempo do Quicksort para %d elementos: %lf s\n", k, (double)(f2-i2)/CLOCKS_PER_SEC);
 
     return 0;
 }
+
 
 void swap(Prato *a, Prato *b){
     Prato aux; 
@@ -63,7 +68,7 @@ void bubble_sort(Prato *cardapio, int k){
                 swap(&cardapio[j+1], &cardapio[j]); 
                 trocas = 1; 
             } if (cardapio[j+1].prioridade == cardapio[j].prioridade){
-                if(cardapio[j+1].tempo < cardapio[j].tempo){
+                if(cardapio[j+1].tempo > cardapio[j].tempo){
                     swap(&cardapio[j+1], &cardapio[j]); 
                 }
             }
@@ -72,13 +77,13 @@ void bubble_sort(Prato *cardapio, int k){
             break; 
     }
 }
-/*
-a escolha do pivo é importante, uso da mediana 
-*/
+
+
 void quick_sort(Prato *cardapio, int inicio, int fim){
     int i = inicio; 
     int j = fim;
     Prato pivo = cardapio[mediana(inicio, (inicio+fim)/2, fim, cardapio)];
+
     do {
         while (cardapio[i].prioridade < pivo.prioridade || (cardapio[i].prioridade==pivo.prioridade && cardapio[i].tempo>pivo.tempo)) i++; 
         while (cardapio[j].prioridade > pivo.prioridade || (cardapio[j].prioridade==pivo.prioridade && cardapio[j].tempo<pivo.tempo)) j--; 
@@ -94,7 +99,10 @@ void quick_sort(Prato *cardapio, int inicio, int fim){
         quick_sort(cardapio, i, fim); 
 }
 
-int mediana(int a, int b, int c, Prato* cardapio){ // retorna o indice do pivo mas só mudar se não precisar
+
+/*  Função auxiliar para a escolha do pivô do Quicksort. Retorna o índice do pivô escolhido  */
+
+int mediana(int a, int b, int c, Prato* cardapio){
         int x=cardapio[a].prioridade, y=cardapio[b].prioridade, z=cardapio[c].prioridade;
 
         if((x>=y && x<=z)||(x<=y && x>=z))
@@ -104,6 +112,7 @@ int mediana(int a, int b, int c, Prato* cardapio){ // retorna o indice do pivo m
         else
             return c;
 }
+
 
 void print_cardapio(Prato *cardapio, int k){
     for (int i = 0; i < k; i++){
