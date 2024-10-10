@@ -13,8 +13,9 @@ typedef struct prato_{
 void swap(Prato *a, Prato *b);
 void merge_sort(Prato *cardapio, int ini, int fim);
 void intercala(Prato *cardapio, int ini, int meio, int fim);
-//void heapify(Prato* cardapio);
-//void heapsort(Prato *cardapio, int n);
+void heapify(Prato *cardapio, int i, int tam_heap);
+void heapsort(Prato *cardapio, int n);
+void build_heap(Prato *cardapio, int k);
 void print_cardapio(Prato *cardapio, int k);
 
 
@@ -34,14 +35,14 @@ int main (void){
 
     //clock_t i1, f1, i2, f2;
     //i1=clock();
-    merge_sort(cardapio, 0, k-1);
+    //merge_sort(cardapio, 0, k-1);
     //f1=clock();
 
     //i2=clock();
-    //heapsort();
+    heapsort(cardapio, k);
     //f2=clock();
 
-    printf("\n");
+    //printf("\n");
     print_cardapio(cardapio, k);
 
     free(cardapio);
@@ -52,7 +53,6 @@ int main (void){
     return 0;
 }
 
-
 void swap(Prato *a, Prato *b){
     Prato aux; 
     aux = *a; 
@@ -60,7 +60,7 @@ void swap(Prato *a, Prato *b){
     *b= aux;
 }
 
-
+//coloquei no runcodes e não passa nos últimos dois casos 
 void merge_sort(Prato *cardapio, int ini, int fim){
     int meio; 
     if (ini < fim){
@@ -90,11 +90,11 @@ void intercala(Prato *cardapio, int ini, int meio, int fim){
     for (k = ini; k <= fim; k++){
         if (L[i].prioridade == R[j].prioridade){
             if (L[i].tempo < R[j].tempo){
-                cardapio[k] = L[i]; 
-                i++;
-            }else{
                 cardapio[k] = R[j]; 
                 j++;
+            }else{
+                cardapio[k] = L[i]; 
+                i++;
             }
         }
         else if (L[i].prioridade < R[j].prioridade){
@@ -108,14 +108,48 @@ void intercala(Prato *cardapio, int ini, int meio, int fim){
     }
 }
 
-/*
-void heapsort(Prato *cardapio, int n){
 
+void heapsort(Prato *cardapio, int n){
+    build_heap(cardapio, n);
+    int tam_heap = n; 
+    for (int i = 0; i < n; i++){
+        swap(&cardapio[0], &cardapio[tam_heap-1]); 
+        tam_heap--;
+        heapify(cardapio, 0, tam_heap); 
+    }
 }
 
-void heapify(){  //construir max heap 
+void heapify(Prato *cardapio, int i, int tam_heap){  //construir max heap 
+    int left, right, max; 
+    left = 2*i + 1;
+    right = 2*i + 2; 
+    max = i; 
+    if (left < tam_heap && cardapio[left].prioridade >= cardapio[max].prioridade){
+        if (cardapio[left].prioridade == cardapio[max].prioridade){
+            if (cardapio[left].tempo > cardapio[right].tempo){
+                max = left; 
+            }else{
+                max = right; 
+            }
+        }else{
+            max = left; 
+        }
+    }
+    if (right < tam_heap && cardapio[right].prioridade > cardapio[max].prioridade){
+        max = right; 
 
-}*/
+    }
+    if (max != i){
+        swap(&cardapio[max], &cardapio[i]); 
+        heapify(cardapio, max, tam_heap);  
+    }
+}
+
+void build_heap(Prato *cardapio, int k){
+    for (int i = (k/2) - 1; i >= 0; i--){
+        heapify(cardapio, i, k); 
+    }
+}
 
 void print_cardapio(Prato *cardapio, int k){
     for (int i = 0; i < k; i++){
