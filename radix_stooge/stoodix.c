@@ -3,7 +3,6 @@
 #include <string.h>
 
 typedef struct carta_{
-    char naipe[4];
     char* valor_carta;
     short int *valor_sort; /* Armazena o valor da carta convertido para inteiros. */
 }Carta;
@@ -24,10 +23,13 @@ int main(void){
 
     for(int i=0; i<k; i++){
         /* Aloca espaço para a string do valor da carta. */
-        baralho[i].valor_carta = (char*)malloc(n_digitos*sizeof(char));
+        char* valores=(char*)malloc(n_digitos*sizeof(char)),
+            *naipe=(char*)malloc((n_dig+4)sizeof(char));
         /* Lê separadamente naipe e valor. */
-        scanf(" %s %s", baralho[i].naipe, baralho[i].valor_carta);
+        scanf(" %s %s", naipe, valores);
         /* Recebe naipe e valores da carta convertidos para a ordenação. */
+        strcat(naipe, valores);
+        baralho[i].valor_carta=naipe;
         baralho[i].valor_sort = converte(baralho[i].naipe, baralho[i].valor_carta, n_digitos);
     }
     /* Imprime a configuração inicial. */
@@ -54,34 +56,34 @@ a ordem especificada, para serem manipulados pelos algoritmos de ordenação. */
 
 short int* converte(char naipe[4], char* valores, int n_digitos){
     /* Um vetor de short ints é criado para guardar os dígitos do valor. */
-    short int *decoded=(short int*)malloc((n_digitos+1)*sizeof(short int));
+    short int *valor_sort=(short int*)malloc((n_digitos+1)*sizeof(short int));
     /* Relaciona cada naipe a um valor segundo a ordem. */
     if(strcmp(naipe, "♦")==0)
-        decoded[0]=0;
+        valor_sort[0]=0;
     else if(strcmp(naipe, "♠")==0)
-        decoded[0]=1;
+        valor_sort[0]=1;
     else if(strcmp(naipe, "♥")==0)
-        decoded[0]=2;
+        valor_sort[0]=2;
     else if(strcmp(naipe, "♣")==0)
-        decoded[0]=3;
+        valor_sort[0]=3;
     /* A cada símbolo da string com o valor é atribuido um algarismo 
     correspondente que mantém a ordem especificada no probolema. */
     for (int i=1; i<=n_digitos; i++){
         switch(valores[i-1]){
-            case '4': decoded[i]=0; break;
-            case '5': decoded[i]=1; break;
-            case '6': decoded[i]=2; break;
-            case '7': decoded[i]=3; break;
-            case 'Q': decoded[i]=4; break;
-            case 'J': decoded[i]=5; break;
-            case 'K': decoded[i]=6; break;
-            case 'A': decoded[i]=7; break;
-            case '2': decoded[i]=8; break;
-            case '3': decoded[i]=9; break;
+            case '4': valor_sort[i]=0; break;
+            case '5': valor_sort[i]=1; break;
+            case '6': valor_sort[i]=2; break;
+            case '7': valor_sort[i]=3; break;
+            case 'Q': valor_sort[i]=4; break;
+            case 'J': valor_sort[i]=5; break;
+            case 'K': valor_sort[i]=6; break;
+            case 'A': valor_sort[i]=7; break;
+            case '2': valor_sort[i]=8; break;
+            case '3': valor_sort[i]=9; break;
         }
     }
     
-    return decoded; /* Retorna um vetor de short ints. */
+    return valor_sort; /* Retorna um vetor de short ints. */
 }
 
 Carta* radixsort(Carta* baralho, int tam, int n_dig){
