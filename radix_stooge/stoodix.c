@@ -1,3 +1,4 @@
+/* Implementação inicial com vetor de short ints. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +6,8 @@
 typedef struct carta_{
     char naipe[4];
     char* valor_carta;
-    short int *valor_sort; /* Armazena o valor da carta convertido para inteiros. */
+    /* Cada short int do vetor é um dígito correspondente a cada valor da carta na mesma posição. */
+    short int *valor_sort;
 }Carta;
 
 short int* converte(char naipe[4], char* valores, int n_digitos);
@@ -103,7 +105,6 @@ Carta* counting_sort(Carta* baralho, int tam, int pos){
         tipos[i]+=tipos[i-1];
 
     Carta* sorted=malloc(tam*sizeof(Carta));
-    /* Não consegue alocar memória suficiente no último caso.*/
 
     for(int i=tam-1; i>=0; i--){
         sorted[tipos[baralho[i].valor_sort[pos]]-1]=baralho[i];

@@ -1,19 +1,18 @@
-/* Versao com potência de 10 não terminada*/
-
+/* Implementação final com um dígito por vez. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct carta_{
-    char* valor; /* Armazena o valor da carta convertido para inteiros. */
+    char* valor; /* String com naipe e valores. */
+    /* Dígito que representa o valor na atual posição. Muda a cada etapa da ordenação. */
     short int digito;
 }Carta;
 
-long long int converte_pow(char naipe[4], char* valores, int n_digitos);
+short int converte(char* valores, int pos);
 Carta* radixsort(Carta* baralho, int tam, int n_dig);
 Carta* counting_sort(Carta* baralho, int tam, int pos);
 void print_array(Carta* baralho, int tam);
-short int converte_cada(char* valor_carta, int pos);
 
 int main(void){
     /* Declaração do número de cartas k e o número de dígitos dos valores. */
@@ -25,14 +24,21 @@ int main(void){
     Carta* baralho=(Carta*)malloc(k*sizeof(Carta));
 
     for(int i=0; i<k; i++){
-        /* Aloca espaço para a string do valor da carta. */
+        /* Aloca espaço para as strings do naipe e do valor da carta. */
+        char* naipe=(char*)malloc(5*sizeof(char));
         char* valor_carta = (char*)malloc(n_digitos*sizeof(char));
-        char* naipe=(char*)malloc((5+n_digitos)*sizeof(char));
         /* Lê separadamente naipe e valor. */
         scanf(" %s %s", naipe, valor_carta);
-        naipe[3]=' '; naipe[4]='\0';
-        /* Recebe naipe e valores da carta convertidos para a ordenação. */
-        baralho[i].valor = strncat(naipe, valor_carta, n_digitos);
+        naipe[3]=' '; naipe[4]='\0'; /* Ajusta a string do naipe. */
+        
+        /* Aloca espaço para string unificada. */
+        baralho[i].valor=(char*)malloc(strlen(naipe)+strlen(valor_carta));
+        strcpy(baralho[i].valor, naipe); /* Copia cada uma para a principal. */
+        strcat(baralho[i].valor, valor_carta);
+
+        free(naipe);
+        free(valor_carta);
+        /* Libera a memória utilizada. */
     }
     /* Imprime a configuração inicial. */
     print_array(baralho, k);
@@ -43,56 +49,25 @@ int main(void){
     printf("Após ordenar por naipe:\n");
     print_array(baralho, k);
 
-    /* Libera a memória alocada para os campos de cada carta e depois libera 
-        o espaço do vetor. */
-    for(int i=0; i<k; i++){
+    /* Libera a memória alocada para o campo do valor de cada 
+    carta e depois libera o espaço do vetor. */
+    for(int i=0; i<k; i++)
         free(baralho[i].valor);
-    }
+    
     free(baralho);
 
 }
 
-/* Função que transforma o naipe e os valores das cartas em algarismos, segundo 
-a ordem especificada, para serem manipulados pelos algoritmos de ordenação. */
+/* Função que transforma o valor de uma carta na determinada posição em um algarismo, 
+segundo a ordem especificada, para ser manipulado pelos algoritmos de ordenação. */
 
-// long long int converte_pow(char naipe[4], char* valores, int n_digitos){
-//     /* Um vetor de short ints é criado para guardar os dígitos do valor. */
-//     long double soma=0;
-//     /* Relaciona cada naipe a um valor segundo a ordem. */
-//     if(strcmp(naipe, "♦")==0)
-//         soma+=0*pow(10, n_digitos);
-//     else if(strcmp(naipe, "♠")==0)
-//         soma+=1*pow(10, n_digitos);
-//     else if(strcmp(naipe, "♥")==0)
-//         soma+=2*pow(10, n_digitos);
-//     else if(strcmp(naipe, "♣")==0)
-//         soma+=3*pow(10, n_digitos);
-//     /* A cada símbolo da string com o valor é atribuido um algarismo 
-//     correspondente que mantém a ordem especificada no probolema. */
-//     for (int i=n_digitos-1; i>=0; i--){
-//         switch(valores[i]){
-//             case '4': soma+=0*pow(10, n_digitos-i-1); break;
-//             case '5': soma+=1*pow(10, n_digitos-i-1); break;
-//             case '6': soma+=2*pow(10, n_digitos-i-1); break;
-//             case '7': soma+=3*pow(10, n_digitos-i-1); break;
-//             case 'Q': soma+=4*pow(10, n_digitos-i-1); break;
-//             case 'J': soma+=5*pow(10, n_digitos-i-1); break;
-//             case 'K': soma+=6*pow(10, n_digitos-i-1); break;
-//             case 'A': soma+=7*pow(10, n_digitos-i-1); break;
-//             case '2': soma+=8*pow(10, n_digitos-i-1); break;
-//             case '3': soma+=9*pow(10, n_digitos-i-1); break;
-//         }
-//     }
-    
-//     return (long long int)soma; /* Retorna a soma acumulada dos valores. */
-// }
-
-short int converte_cada(char* valor_carta, int pos){
-    /* Um vetor de short ints é criado para guardar os dígitos do valor. */
-    short int res;
-    if(pos==0){
-        char naipe[3];
-        strncpy(naipe, valor_carta, 3);
+short int converte(char* valores, int pos){
+    short int res; /* Dígito resultante da conversão. */
+    if(pos==0){ /* Se a posição é a primeira, deve-se converter o naipe. */
+        /* Copia da string de valor a parte do naipe. */
+        char naipe[4];
+        strncpy(naipe, valores, 3);
+        naipe[3]='\0';
         /* Relaciona cada naipe a um valor segundo a ordem. */
         if(strcmp(naipe, "♦")==0)
             res=0;
@@ -102,59 +77,71 @@ short int converte_cada(char* valor_carta, int pos){
             res=2;
         else if(strcmp(naipe, "♣")==0)
             res=3;
-    }else{
-        char caracter=*(valor_carta+pos+3);
-        /* A cada símbolo da string com o valor é atribuido um algarismo 
-        correspondente que mantém a ordem especificada no probolema. */
-        
-            switch(caracter){
-                case '4': res=0; break;
-                case '5': res=1; break;
-                case '6': res=2; break;
-                case '7': res=3; break;
-                case 'Q': res=4; break;
-                case 'J': res=5; break;
-                case 'K': res=6; break;
-                case 'A': res=7; break;
-                case '2': res=8; break;
-                case '3': res=9; break;
-            }
+    }else{ /* Se a posição não for zero, converte-se um valor em número. */
+        /* Acessa o caracter na posição desejada da string. */
+        char caracter=*(valores+pos+3);
+        /* Designa um algarismo ao valor. */
+        switch(caracter){
+            case '4': res=0; break;
+            case '5': res=1; break;
+            case '6': res=2; break;
+            case '7': res=3; break;
+            case 'Q': res=4; break;
+            case 'J': res=5; break;
+            case 'K': res=6; break;
+            case 'A': res=7; break;
+            case '2': res=8; break;
+            case '3': res=9; break;
+        }
     }
-    
-    return res; /* Retorna a soma acumulada dos valores. */
+    /* Retorna o dígito correspondente ao valor daquela posição. */
+    return res;
 }
 
+/* Função que chama o counting_sort para cada conjunto de dígitos 
+na posição i. */
 Carta* radixsort(Carta* baralho, int tam, int n_dig){
-    for(int i=n_dig-1; i>=0; i--){
+    /* Começa ordenando pelo último dígito, até o primeiro (posição i=1). */
+    for(int i=n_dig; i>0; i--){
         baralho=counting_sort(baralho, tam, i);
-        printf("Após ordenar o %d° dígito dos valores:\n", i+1);
+        printf("Após ordenar o %d° dígito dos valores:\n", i);
         print_array(baralho, tam);
     }
-    
+    /* Por fim, ordena os valores na posição 0, os naipes. */
     return counting_sort(baralho, tam, 0);
 }
 
 Carta* counting_sort(Carta* baralho, int tam, int pos){
-    short int tipos[10]={0};
-    //short int* input=(short int*)malloc(tam*sizeof(short int));
+    /* Vetor que guarda quantas ocorrências de cada dígito existem. */
+    int tipos[10]={0};
     for(int i=0; i<tam; i++){
-        baralho[i].digito=converte_cada(baralho[i].valor, pos);
-        tipos[baralho[i].digito]++;
+        /* Campo 'digito' da carta recebe o número correspondente ao 
+            valor da carta na posição que está sendo avaliada. */
+        baralho[i].digito=converte(baralho[i].valor, pos);
+        tipos[baralho[i].digito]++; /* Incrementa o vetor de ocorrência de tipos. */
     }
+    /* Acerta o vetor de ocorrências. */
     for(int i=1; i<10; i++)
         tipos[i]+=tipos[i-1];
 
-    Carta* sorted=(Carta*)malloc(tam*sizeof(Carta));
+    /* Aloca o vetor substituto. */
+    Carta* sorted=malloc(tam*sizeof(Carta));
 
+    /* Percorre o vetor original, acessa o vetor de tipos para o dígito do elemento i 
+    e atribui o elemento ao vetor substituto na posição indicada por tipos[].*/
     for(int i=tam-1; i>=0; i--){
+        /* Por padrão, o vetor é percorrido na ordem inversa a fim de manter a 
+        estabilidade, mesmo que não seja um fator relevante para esse exercício. */
         sorted[tipos[baralho[i].digito]-1]=baralho[i];
-        tipos[baralho[i].digito]--;
+        tipos[baralho[i].digito]--; /* Atualiza o vetor de ocorrências. */
     }
 
+    /* Libera a memória do vetor original e retorna o ordenado. */
     free(baralho);
     return sorted;
 }
 
+/* Função que imprime as cartas de um baralho. */
 void print_array(Carta* baralho, int tam){
     for(int i=0; i<tam; i++){
         printf("%s;", baralho[i].valor);
