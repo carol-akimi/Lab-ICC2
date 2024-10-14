@@ -3,6 +3,7 @@
 #include <string.h>
 
 typedef struct carta_{
+    char naipe[4];
     char* valor_carta;
     short int *valor_sort; /* Armazena o valor da carta convertido para inteiros. */
 }Carta;
@@ -23,13 +24,10 @@ int main(void){
 
     for(int i=0; i<k; i++){
         /* Aloca espaço para a string do valor da carta. */
-        char* valores=(char*)malloc(n_digitos*sizeof(char)),
-            *naipe=(char*)malloc((n_dig+4)sizeof(char));
+        baralho[i].valor_carta = (char*)malloc(n_digitos*sizeof(char));
         /* Lê separadamente naipe e valor. */
-        scanf(" %s %s", naipe, valores);
+        scanf(" %s %s", baralho[i].naipe, baralho[i].valor_carta);
         /* Recebe naipe e valores da carta convertidos para a ordenação. */
-        strcat(naipe, valores);
-        baralho[i].valor_carta=naipe;
         baralho[i].valor_sort = converte(baralho[i].naipe, baralho[i].valor_carta, n_digitos);
     }
     /* Imprime a configuração inicial. */
@@ -97,7 +95,7 @@ Carta* radixsort(Carta* baralho, int tam, int n_dig){
 }
 
 Carta* counting_sort(Carta* baralho, int tam, int pos){
-    short int tipos[10]={0};
+    int tipos[10]={0};
     for(int i=0; i<tam; i++){
         tipos[baralho[i].valor_sort[pos]]++;
     }

@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 typedef struct carta_{
     char* valor; /* Armazena o valor da carta convertido para inteiros. */
+    short int digito;
 }Carta;
 
 long long int converte_pow(char naipe[4], char* valores, int n_digitos);
@@ -30,9 +30,9 @@ int main(void){
         char* naipe=(char*)malloc((5+n_digitos)*sizeof(char));
         /* Lê separadamente naipe e valor. */
         scanf(" %s %s", naipe, valor_carta);
-        naipe[3]=' ';
+        naipe[3]=' '; naipe[4]='\0';
         /* Recebe naipe e valores da carta convertidos para a ordenação. */
-        baralho[i].valor = strcat(naipe, valor_carta);
+        baralho[i].valor = strncat(naipe, valor_carta, n_digitos);
     }
     /* Imprime a configuração inicial. */
     print_array(baralho, k);
@@ -125,7 +125,7 @@ short int converte_cada(char* valor_carta, int pos){
 }
 
 Carta* radixsort(Carta* baralho, int tam, int n_dig){
-    for(int i=n_dig-1; i>0; i--){
+    for(int i=n_dig-1; i>=0; i--){
         baralho=counting_sort(baralho, tam, i);
         printf("Após ordenar o %d° dígito dos valores:\n", i+1);
         print_array(baralho, tam);
@@ -136,20 +136,19 @@ Carta* radixsort(Carta* baralho, int tam, int n_dig){
 
 Carta* counting_sort(Carta* baralho, int tam, int pos){
     short int tipos[10]={0};
-    short int* input=(short int*)malloc(tam*sizeof(short int));
+    //short int* input=(short int*)malloc(tam*sizeof(short int));
     for(int i=0; i<tam; i++){
-        short int valor_carta_i=converte_cada(baralho[i].valor, pos);
-        tipos[valor_carta_i]++;
-        input[i]=valor_carta_i;
+        baralho[i].digito=converte_cada(baralho[i].valor, pos);
+        tipos[baralho[i].digito]++;
     }
     for(int i=1; i<10; i++)
         tipos[i]+=tipos[i-1];
 
-    Carta* sorted=malloc(tam*sizeof(Carta));
+    Carta* sorted=(Carta*)malloc(tam*sizeof(Carta));
 
     for(int i=tam-1; i>=0; i--){
-        sorted[tipos[input[i]]-1]=baralho[i];
-        tipos[input[i]]--;
+        sorted[tipos[baralho[i].digito]-1]=baralho[i];
+        tipos[baralho[i].digito]--;
     }
 
     free(baralho);
