@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct carta_{
     char* valor; /* String com naipe e valores. */
@@ -43,12 +44,15 @@ int main(void){
         /* Libera a memória utilizada. */
     }
     /* Imprime a configuração inicial. */
-
+    clock_t ini, fim; 
+    ini = clock();
     stooge_full(baralho, k, n_digitos); /* Ordena. */
+    fim = clock(); 
 
     /* Imprime o baralho depois do último passo da ordenação. */
     //printf("Após ordenar por naipe:\n");
     print_array(baralho, k);
+    printf("\nTempo do Stooge Sort para %d elementos: %lf s\n", k, (double)(fim-ini)/CLOCKS_PER_SEC);
 
     /* Libera a memória alocada para o campo do valor de cada 
     carta e depois libera o espaço do vetor. */
@@ -102,14 +106,6 @@ void stooge_full(Carta *baralho, int k, int n_digitos){
         baralho[i].valor_converte = converte(baralho[i].valor, n_digitos+4); 
     } 
 
-    for (int w = 0; w < k; w++){
-        int a = 0; 
-        while (baralho[w].valor[a] != '\0'){
-            a++;
-
-        }
-    }
-
     for (int j = n_digitos; j >= 0; j--){
         stooge(baralho, 0, k-1, j); 
     }
@@ -117,8 +113,6 @@ void stooge_full(Carta *baralho, int k, int n_digitos){
 
 
 void stooge(Carta *baralho, int ini, int fim, int pos){
-
-
     if (ini >= fim)
         return; 
 
