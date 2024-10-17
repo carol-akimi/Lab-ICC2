@@ -22,7 +22,7 @@ int main(void){
     scanf("%d %d", &k, &n_digitos);
 
     /* Aloca o vetor das cartas. */
-    Carta* baralho=(Carta*)malloc(k*sizeof(Carta));
+    Carta* baralho =(Carta*)malloc(k*sizeof(Carta));
 
     for(int i=0; i<k; i++){
         /* Aloca espaço para a string do valor da carta. */
