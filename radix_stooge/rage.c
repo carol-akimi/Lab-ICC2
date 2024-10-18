@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct carta_{
     char* valor; /* String com naipe e valores. */
-    /* Dígito que representa o valor na atual posição. Muda a cada etapa da ordenação. */
+    /* Dígito que representa o valor na atual posição.
+        Muda a cada etapa da ordenação. */
     short int digito;
-}Carta;
+} Carta;
 
 short int converte(char* valores, int pos);
 Carta* radixsort(Carta* baralho, int tam, int n_dig);
@@ -43,11 +45,16 @@ int main(void){
     /* Imprime a configuração inicial. */
     print_array(baralho, k);
     
+    clock_t i, f;
+    i=clock();
     baralho=radixsort(baralho, k, n_digitos); /* Ordena. */
+    f=clock();
 
     /* Imprime o baralho depois do último passo da ordenação. */
     printf("Após ordenar por naipe:\n");
     print_array(baralho, k);
+
+    printf("\nTempo do Radix Sort para %d cartas com %d valores: %lf\n", k, n_digitos+1, (double)(f-i)/CLOCKS_PER_SEC);
 
     /* Libera a memória alocada para o campo do valor de cada 
     carta e depois libera o espaço do vetor. */
