@@ -19,21 +19,22 @@ int main(void){
 
     for (int i = 0; i < n; i++){
         scanf("%d", &baralho[i].valor); 
-        baralho[i].posicao = i; 
+        baralho[i].posicao = i + 1; 
     }
+    
     clock_t ini1, fim1; 
     ini1 = clock(); 
-    qsort(baralho, n, sizeof(int), comparar); 
+    qsort(baralho, n, sizeof(Carta), comparar); 
     int pos = busca_binaria(baralho, 0, n-1, k); 
     fim1 = clock(); 
-
+/*
     clock_t ini2, fim2; 
     ini2 = clock(); 
-    //int pos=busca_linear(baralho, n, k);
-    fim2 = clock();  
+    int pos = busca_linear(baralho, n, k);
+    fim2 = clock();  */
     
     printf("%d\n", pos); 
-    printf("Tempo de execução da busca binaria %lf\n", ((double) (fim1 - ini1)) / CLOCKS_PER_SEC); 
+    //printf("Tempo de execução da busca binaria %lf\n", ((double) (fim1 - ini1)) / CLOCKS_PER_SEC); 
     //printf("Tempo de execução da busca linear %lf\n", ((double) (fim2 - ini2)) / CLOCKS_PER_SEC); 
 }
 
@@ -51,16 +52,15 @@ int busca_binaria(Carta *baralho, int ini, int fim, int k){ //iterativa
         int meio = (ini + fim)/2; 
         int valor = baralho[meio].valor; 
         if (valor == k){
-            while (baralho[meio-1].valor == k){
+            while (meio > 0 && baralho[meio-1].valor == k){
                 meio--; 
             }
             return baralho[meio].posicao; 
         }
-        if (valor > k)
+        if (k > valor)
             ini = meio + 1; 
-        if (valor < k)
+        if (k < valor)
             fim = meio; 
-        
     }
 }
 
@@ -69,7 +69,7 @@ int comparar(const void *A, const void *B){
     Carta *a = (Carta*)A, *b = (Carta*)B;
     if ((*a).valor > (*b).valor)
         return 1; 
-    else if ((*a).valor== (*b).valor)
+    else if ((*a).valor == (*b).valor)
         return 0; 
     else
         return -1; 
