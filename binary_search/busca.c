@@ -4,7 +4,7 @@
 
 typedef struct carta_{
     int valor;
-    short int posicao;
+    int posicao;
 }Carta;
 
 int busca_linear(Carta *baralho, int n, int k);
@@ -27,15 +27,15 @@ int main(void){
     qsort(baralho, n, sizeof(Carta), comparar); 
     int pos = busca_binaria(baralho, 0, n-1, k); 
     fim1 = clock(); 
-/*
-    clock_t ini2, fim2; 
-    ini2 = clock(); 
-    int pos = busca_linear(baralho, n, k);
-    fim2 = clock();  */
+
+    // clock_t ini2, fim2; 
+    // ini2 = clock(); 
+    //int pos = busca_linear(baralho, n, k);
+    // fim2 = clock();
     
     printf("%d\n", pos); 
     //printf("Tempo de execução da busca binaria %lf\n", ((double) (fim1 - ini1)) / CLOCKS_PER_SEC); 
-    //printf("Tempo de execução da busca linear %lf\n", ((double) (fim2 - ini2)) / CLOCKS_PER_SEC); 
+    printf("Tempo de execução da busca linear %lf\n", ((double) (fim2 - ini2)) / CLOCKS_PER_SEC); 
 }
 
 int busca_linear(Carta *baralho, int n, int k){
@@ -64,7 +64,7 @@ int busca_binaria(Carta *baralho, int ini, int fim, int k){ //iterativa
     }
 }
 
-//usado na funçaõ qsort para ordenar o vetor (podemos mudar para outro algoritmo mais eficiente)
+//usado na função qsort para ordenar o vetor (podemos mudar para outro algoritmo mais eficiente)
 int comparar(const void *A, const void *B){
     Carta *a = (Carta*)A, *b = (Carta*)B;
     if ((*a).valor > (*b).valor)
