@@ -54,7 +54,7 @@ int main(void){
 /* Função que transforma o naipe e os valores das cartas em algarismos, segundo 
 a ordem especificada, para serem manipulados pelos algoritmos de ordenação. */
 
-short int* converte(char naipe[4], char* valores, int n_digitos){
+short int* converte(char naipe[4], char* valores, int n_digitos)
     /* Um vetor de short ints é criado para guardar os dígitos do valor. */
     short int *valor_sort=(short int*)malloc((n_digitos+1)*sizeof(short int));
     /* Relaciona cada naipe a um valor segundo a ordem. */
@@ -84,7 +84,7 @@ short int* converte(char naipe[4], char* valores, int n_digitos){
     }
     
     return valor_sort; /* Retorna um vetor de short ints. */
-}
+
 
 Carta* radixsort(Carta* baralho, int tam, int n_dig){
     for(int i=n_dig; i>0; i--){
