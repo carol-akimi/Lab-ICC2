@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct no NO;
 struct no{
@@ -7,7 +8,8 @@ struct no{
     NO *esq, *dir;
 };
 
-void insert(NO* raiz, int valor);
+void insert(NO** raiz, int valor);
+void insercao(NO** raiz, int valor);
 
 int main(void){
     int n, valores, alvo;
@@ -16,23 +18,26 @@ int main(void){
 
     NO* raiz=NULL;
 
+    clock_t s, e;
+
+    s=clock();
     for (int i=0; i<n; i++){
         scanf("%d", &valores);
-        insert(raiz, valores);
+        insercao(&raiz, valores);
     }
+    e=clock();
 
     scanf("%d", &alvo);
 
-    printf("%d\n", raiz->valor);
+    printf("%d\nTempo de execução: %lf s\n", raiz->valor, (double)(e-s)/CLOCKS_PER_SEC);
 
     return 0;
 }
 
 /* dando seg fault, provavelmente tá mal feito */
-void insert(NO* raiz, int valor){
-    NO* ptr=raiz;
+void insert(NO** raiz, int valor){
+    NO* ptr=*raiz;
     while(ptr!=NULL){
-        printf("%d\n", ptr->valor);
         if(ptr->valor==valor)
             return;
         if(ptr->valor<valor){
@@ -52,11 +57,37 @@ void insert(NO* raiz, int valor){
     novo->esq=NULL;
     novo->dir=NULL;
 
-    if(ptr!=NULL){
+    if(ptr==NULL)
+        *raiz=novo;
+    else{
         if(valor<ptr->valor)
             ptr->esq=novo;
         else
             ptr->dir=novo;
     }
+}
+
+void insercao(NO** raiz, int valor){
+    if((*raiz)!=NULL){
+        if(valor<(*raiz)->valor)
+            if((*raiz)->esq!=NULL)
+                insercao(&(*raiz)->esq, valor);
+        else
+            if((*raiz)->dir!=NULL)
+                insercao(&(*raiz)->dir, valor);
+    }
+
+    NO* novo=(NO*)malloc(sizeof(NO));
+    novo->valor=valor;
+    novo->esq=NULL;
+    novo->dir=NULL;
     
+    if((*raiz)==NULL)
+        *raiz=novo;
+    else{
+        if(valor<(*raiz)->valor)
+            (*raiz)->esq=novo;
+        else
+            (*raiz)->dir=novo;
+    } 
 }
