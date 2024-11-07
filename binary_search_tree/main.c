@@ -10,6 +10,7 @@ struct no{
 
 void insert(NO** raiz, int valor);
 void insercao(NO** raiz, int valor);
+void busca_binaria(NO *raiz, int x);
 
 int main(void){
     int n, valores, alvo;
@@ -18,91 +19,76 @@ int main(void){
 
     NO* raiz=NULL;
 
-    clock_t s, e;
-
-    s=clock();
-    for (int i=0; i<n; i++){
+    //clock_t s, e;
+    //s=clock();
+    for(int i=0; i<n; i++){
         scanf("%d", &valores);
-        insercao(&raiz, valores);
+        insert(&raiz, valores);
     }
-    e=clock();
-
     scanf("%d", &alvo);
-
-    printf("%d\nTempo de execução: %lf s\n", raiz->valor, (double)(e-s)/CLOCKS_PER_SEC);
+    busca_binaria(raiz, alvo);
+    printf("\n");
 
     return 0;
 }
 
-/* dando seg fault, provavelmente tá mal feito */
+/* Aparentemente é mais rápido que o recursivo */
 void insert(NO** raiz, int valor){
     NO* ptr=*raiz;
+    NO* pai=NULL;
+
     while(ptr!=NULL){
-        if(ptr->valor==valor)
+        pai=ptr;
+        if(valor==ptr->valor)
             return;
-        if(ptr->valor<valor){
-            if(ptr->dir==NULL)
-                break;
-            ptr=ptr->dir;
-        }
-        else{
-            if(ptr->esq==NULL)
-                break;
+        if(ptr->valor>valor)
             ptr=ptr->esq;
-        }
-    }
-
-    NO* novo = (NO*)malloc(sizeof(NO));
-    novo->valor=valor;
-    novo->esq=NULL;
-    novo->dir=NULL;
-
-    if(ptr==NULL)
-        *raiz=novo;
-    else{
-        if(valor<ptr->valor)
-            ptr->esq=novo;
         else
-            ptr->dir=novo;
-    }
-}
-
-void insercao(NO** raiz, int valor){
-    if((*raiz)!=NULL){
-        if(valor<(*raiz)->valor)
-            if((*raiz)->esq!=NULL)
-                insercao(&(*raiz)->esq, valor);
-        else
-            if((*raiz)->dir!=NULL)
-                insercao(&(*raiz)->dir, valor);
+            ptr=ptr->dir;
     }
 
     NO* novo=(NO*)malloc(sizeof(NO));
     novo->valor=valor;
     novo->esq=NULL;
     novo->dir=NULL;
-    
-    if((*raiz)==NULL)
+
+    if(*raiz==NULL){
         *raiz=novo;
-    else{
-        if(valor<(*raiz)->valor)
-            (*raiz)->esq=novo;
-        else
-            (*raiz)->dir=novo;
-    } 
+        return;
+    }
+
+    if(valor<pai->valor)
+        pai->esq=novo;
+    else
+        pai->dir=novo;
 }
 
-void busca_binaria(NO *raiz, int x){
-    if (raiz->valor == x){
-        return; 
+
+void insercao(NO** raiz, int valor){
+    if(*raiz==NULL){
+        NO* novo=(NO*)malloc(sizeof(NO));
+        novo->valor=valor;
+        novo->esq=NULL;
+        novo->dir=NULL;
+        *raiz=novo;
+    }else{
+        if(valor<(*raiz)->valor)
+            insercao(&(*raiz)->esq, valor);
+        else
+            insercao(&(*raiz)->dir, valor);
     }
-    if (raiz->esq->valor > x){
-        printf("%d ", raiz->esq->valor); 
-        busca(raiz->esq, x); 
-    } else{ 
-        printf("%d", raiz->dir->valor); 
-        busca(raiz->dir, x); 
+}
+
+void busca_binaria(NO* raiz, int x){
+    printf("%d ", raiz->valor);
+    if(raiz->valor==x){
+        return;
     }
+    if(x<raiz->valor)
+        busca_binaria(raiz->esq, x);
+    else
+        busca_binaria(raiz->dir, x);
+
 }
 
 void busca_profundidade(NO *raiz, int x){
