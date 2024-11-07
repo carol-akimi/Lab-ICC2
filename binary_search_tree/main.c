@@ -11,6 +11,7 @@ struct no{
 void insert(NO** raiz, int valor);
 void insercao(NO** raiz, int valor);
 void busca_binaria(NO *raiz, int x);
+int busca_profundidade(NO *raiz, int x);
 
 int main(void){
     int n, valores, alvo;
@@ -26,7 +27,8 @@ int main(void){
         insert(&raiz, valores);
     }
     scanf("%d", &alvo);
-    busca_binaria(raiz, alvo);
+    //busca_binaria(raiz, alvo);
+    busca_profundidade(raiz, alvo); 
     printf("\n");
 
     return 0;
@@ -80,23 +82,29 @@ void insercao(NO** raiz, int valor){
 }
 
 void busca_binaria(NO* raiz, int x){
-    printf("%d ", raiz->valor);
-    if(raiz->valor==x){
-        return;
+    if (raiz == NULL){
+        printf("-1"); 
+        return; 
     }
-    if(x<raiz->valor)
+    printf("%d ", raiz->valor);
+    if(raiz->valor == x)
+        return;
+    if(x < raiz->valor)
         busca_binaria(raiz->esq, x);
     else
         busca_binaria(raiz->dir, x);
-
 }
 
-void busca_profundidade(NO *raiz, int x){
+int busca_profundidade(NO *raiz, int x){
     if (raiz != NULL){
+        printf("%d ", raiz->valor); 
         if (raiz->valor == x){
-            return; 
+            return 1; 
         }
-        busca_profundidade(raiz->esq, x);
-        busca_profundidade(raiz->dir, x); 
+        if (busca_profundidade(raiz->esq, x))
+            return 1; 
+        if (busca_profundidade(raiz->dir, x))
+            return 1; 
     }
+    return 0; 
 }
