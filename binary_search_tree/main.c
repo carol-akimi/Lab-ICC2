@@ -91,3 +91,26 @@ void insercao(NO** raiz, int valor){
             (*raiz)->dir=novo;
     } 
 }
+
+void busca_binaria(NO *raiz, int x){
+    if (raiz->valor == x){
+        return; 
+    }
+    if (raiz->esq->valor > x){
+        printf("%d ", raiz->esq->valor); 
+        busca(raiz->esq, x); 
+    } else{ 
+        printf("%d", raiz->dir->valor); 
+        busca(raiz->dir, x); 
+    }
+}
+
+void busca_profundidade(NO *raiz, int x){
+    if (raiz != NULL){
+        if (raiz->valor == x){
+            return; 
+        }
+        busca_profundidade(raiz->esq, x);
+        busca_profundidade(raiz->dir, x); 
+    }
+}
