@@ -97,6 +97,10 @@ void insere_recursivo(NO** raiz, int valor){
 }
 
 void busca_binaria(NO* raiz, int x){
+    if (raiz == NULL){
+        printf("-1"); 
+        return; 
+    }/* Imprime um valor inválido se não encontrar */
     /* Imprime o valor do nó atual */
     printf("%d ", raiz->valor);
     /* Para a recursão se o elemento foi encontrado */
@@ -112,12 +116,15 @@ void busca_binaria(NO* raiz, int x){
 
 }
 
-void busca_profundidade(NO *raiz, int x){
+int busca_profundidade(NO *raiz, int x){
     if (raiz != NULL){
+        printf("%d ", raiz->valor);
         if (raiz->valor == x){
-            return; 
+            return 1; 
         }
-        busca_profundidade(raiz->esq, x);
-        busca_profundidade(raiz->dir, x); 
+        if (busca_profundidade(raiz->esq, x))
+            return 1; 
+        if (busca_profundidade(raiz->dir, x))
+            return 1;
     }
 }
