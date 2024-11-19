@@ -27,11 +27,6 @@ void MSC(int n){
 }
 
 
-void HashMap(int n){
-
-}
-
-
 void Ordenacao(int n){
     long int* Produtos = (long int*) malloc(n*sizeof(long int));
 
