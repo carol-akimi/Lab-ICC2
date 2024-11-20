@@ -1,6 +1,10 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
+/**
+ * não roda nos últimos três casos do runcodes 
+ */
+
 int hash(int dado, int n){
     return dado % n;
 }
