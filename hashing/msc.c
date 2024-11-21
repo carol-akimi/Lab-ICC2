@@ -1,81 +1,114 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void MSC(int n);
-void Ordenacao(int n);
-void QuickSort(long int* vet, int inicio, int fim);
-int mediana(long int a, long int b, long int c);
+int Hashing(int* Produtos, int n);
+int hash(int valor, int tam);
+void inserir(int* Tabela, int valor, int tam_tabela);
+int busca(int* Tabela, int valor, int tam);
+
+
+int Ordenacao(int* Produtos, int n);
+void QuickSort(int* vet, int inicio, int fim);
+int mediana(int a, int b, int c);
 
 int main(void){
     int n;
 
     scanf("%d", &n);
 
-   MSC(n);    
+    int* Produtos = (int*) malloc(n*sizeof(int)); // Aloca o vetor
+
+    for(int i = 0; i < n; i++) // Lê os valores e coloca no vetor
+        scanf("%d", &Produtos[i]);
+
+    int maior_seq;
+    maior_seq = Hashing(Produtos, n);
+
+    printf("%d\n", maior_seq);
 
     return 0;
 }
 
-void MSC(int n){
-    long int* Produtos = (long int*) malloc(n*sizeof(long int));
-    long int elemento;
+int Hashing(int* Produtos, int n){
+    int* Tabela = (int*)calloc(n+n/2, sizeof(int));
+    int tam_tabela = n+n/2;
 
-    int contador = 1, maxseq = 1;
-    for(int i = 0; i < n; i++)
-        scanf("%ld", &Produtos[i]);
-
-    int j;
     for(int i = 0; i < n; i++){
-        elemento = Produtos[i];
-        for(j = 0; j < n; j++){
-            if(Produtos[j] == elemento - 1){ // Se acha um outro menor, substitui e recomeça a procurar
-                elemento = Produtos[j];
-                j = 0;
-            }
-        }
-        if(j == n){ // Se chegou no final, ou seja, se não tem outro menor que elemento
-            for(j = 0; j < n; j++){ // itera procurando pelos sucessores
-                if(Produtos[j] == elemento + 1){
-                    contador++;
-                    elemento = Produtos[j];
-                    j = 0;
-                }
-            }
-        }
-        if(contador > maxseq)
-            maxseq = contador;
-        contador = 1;
+        inserir(Tabela, Produtos[i], tam_tabela);
     }
 
-    printf("%d\n", maxseq);       
+    int maxseq = 1;
+    for(int i = 0; i < n; i++){
+        int num = Produtos[i];
+        if(busca(Tabela, num-1, tam_tabela) == -1){
+            int atual = num, cont = 1;
+            while(busca(Tabela, atual+1, tam_tabela) != -1){
+                atual++;
+                cont++;
+            }
+            if(cont > maxseq){
+                maxseq = cont;
+            }
+        }
+    }
+
+    return maxseq;
+}
+
+int hash(int valor, int tam){
+    return valor % tam;
+}
+
+void inserir(int* Tabela, int valor, int tam_tabela){
+    int indice = hash(valor, tam_tabela);
+    while(Tabela[indice] != 0){
+        indice = hash(indice + 1, tam_tabela);
+    }
+    Tabela[indice] = valor;
+}
+
+int busca(int* Tabela, int valor, int tam){
+    int indice = hash(valor, tam),
+    inicial = indice;
+    while(Tabela[indice] != 0){
+        if(Tabela[indice] == valor){
+            return indice;
+        }
+        indice = hash(indice + 1, tam);
+        if (indice == inicial){
+            break; 
+        }
+    }
+    return -1;
 }
 
 
-void Ordenacao(int n){
-    long int* Produtos = (long int*) malloc(n*sizeof(long int));
 
-    for(int i = 0; i < n; i++)
-        scanf("%ld", &Produtos[i]);
-    
-    QuickSort(Produtos, 0, n-1);
 
+
+int Ordenacao(int* Produtos, int n){
+    QuickSort(Produtos, 0, n-1); // Ordena usando o quicksort
+
+    // Variável que conta o tamanho da sequência atual e 
+    // outra que guarda o tamanho da maior sequência até então
     int contador = 1, maxseq = 1;
-
-    int j;
     for(int i = 0; i < n; i++){
-        for(j = i; Produtos[j+1] == Produtos[j] + 1; j++)
+    // Itera pelos elementos e incrementa o contador durante uma sequência
+        while(Produtos[i+1] == Produtos[i] + 1){
             contador++;
+            i++;
+        }
+        // Atualiza o tamanho máximo se encontrar uma maior
         if(contador > maxseq)
             maxseq = contador;
         contador = 1;
-        i = j;
     }
 
-    printf("%d\n", maxseq);
+    return maxseq;
 }
 
 //Função devove a mediana dados três elementos
-int mediana(long int a, long int b, long int c){
+int mediana(int a, int b, int c){
     if((a >= b && a <= c)||(a <= b && a >= c))
         return a;
     else if((b>=a && b<=c)||(b<=a && b >= c))
@@ -84,11 +117,11 @@ int mediana(long int a, long int b, long int c){
         return c;
 }
 
-void QuickSort(long int* vet, int inicio, int fim){
+void QuickSort(int* vet, int inicio, int fim){
     int i = inicio; 
     int j = fim; 
     //o pivo é a mediana entre o elemento do inicio, meio e fim
-    long int pivo = mediana(vet[inicio], vet[(inicio+fim)/2], vet[fim]); 
+    int pivo = mediana(vet[inicio], vet[(inicio+fim)/2], vet[fim]); 
     do{
         //organiza os elementos de forma que todos a esquerda
         //sejam menores e os da direita, maiores
@@ -96,7 +129,7 @@ void QuickSort(long int* vet, int inicio, int fim){
         while (vet[j] > pivo) j--;  
         if (i <= j){
             //troca os elementos se o da direita é menor que um no lado esquerdo
-            long int aux = vet[i]; 
+            int aux = vet[i]; 
             vet[i] = vet[j]; 
             vet[j] = aux; 
             i++; 
