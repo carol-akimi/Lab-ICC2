@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void MSC(int n);
 void Ordenacao(int n);
 void QuickSort(long int* vet, int inicio, int fim);
 int mediana(long int a, long int b, long int c);
@@ -10,7 +11,7 @@ int main(void){
 
     scanf("%d", &n);
 
-    Ordenacao(n);    
+   MSC(n);    
 
     return 0;
 }
@@ -18,12 +19,35 @@ int main(void){
 void MSC(int n){
     long int* Produtos = (long int*) malloc(n*sizeof(long int));
     long int elemento;
-    short int* contagem = (short int*) calloc(n*sizeof(short int));
 
-    int j, contador; char novaseq = 1;
+    int contador = 1, maxseq = 1;
     for(int i = 0; i < n; i++)
         scanf("%ld", &Produtos[i]);
-        
+
+    int j;
+    for(int i = 0; i < n; i++){
+        elemento = Produtos[i];
+        for(j = 0; j < n; j++){
+            if(Produtos[j] == elemento - 1){ // Se acha um outro menor, substitui e recomeça a procurar
+                elemento = Produtos[j];
+                j = 0;
+            }
+        }
+        if(j == n){ // Se chegou no final, ou seja, se não tem outro menor que elemento
+            for(j = 0; j < n; j++){ // itera procurando pelos sucessores
+                if(Produtos[j] == elemento + 1){
+                    contador++;
+                    elemento = Produtos[j];
+                    j = 0;
+                }
+            }
+        }
+        if(contador > maxseq)
+            maxseq = contador;
+        contador = 1;
+    }
+
+    printf("%d\n", maxseq);       
 }
 
 
