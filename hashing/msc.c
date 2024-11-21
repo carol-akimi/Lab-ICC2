@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int Hashing(int* Produtos, int n);
 int hash(int valor, int tam);
 void inserir(int* Tabela, int valor, int tam_tabela);
 int busca(int* Tabela, int valor, int tam);
-
 
 int Ordenacao(int* Produtos, int n);
 void QuickSort(int* vet, int inicio, int fim);
@@ -21,18 +21,24 @@ int main(void){
     for(int i = 0; i < n; i++) // Lê os valores e coloca no vetor
         scanf("%d", &Produtos[i]);
 
-    int maior_seq;
+    int maior_seq; clock_t i, f;
+    i = clock();
     maior_seq = Hashing(Produtos, n);
+    f = clock();
 
     printf("%d\n", maior_seq);
 
+    printf("\n\nTempo do Hashing para %d valores: %lf s\n", n, (double)(f-i)/CLOCKS_PER_SEC);
+    //printf("\n\nTempo do Hashing para %d valores: %lf s\n", n, (double)(f-i)/CLOCKS_PER_SEC);
     return 0;
 }
 
 int Hashing(int* Produtos, int n){
+    // Inicializa a tabela com zeros
     int* Tabela = (int*)calloc(n+n/2, sizeof(int));
-    int tam_tabela = n+n/2;
+    int tam_tabela = n+n/2; // Tamanho maior para reduzir colisões
 
+    // Produtos são inseridos na tabela
     for(int i = 0; i < n; i++){
         inserir(Tabela, Produtos[i], tam_tabela);
     }
@@ -40,12 +46,15 @@ int Hashing(int* Produtos, int n){
     int maxseq = 1;
     for(int i = 0; i < n; i++){
         int num = Produtos[i];
+        // Procura o antecessor de cada elemento
         if(busca(Tabela, num-1, tam_tabela) == -1){
+        // Quando acha algum valor que pode iniciar uma sequência, 
+        // começa a contar. O laço procura os sucessores.
             int atual = num, cont = 1;
             while(busca(Tabela, atual+1, tam_tabela) != -1){
                 atual++;
                 cont++;
-            }
+            } // Atualiza o valor do tamanho da maior sequência.
             if(cont > maxseq){
                 maxseq = cont;
             }
@@ -55,10 +64,14 @@ int Hashing(int* Produtos, int n){
     return maxseq;
 }
 
+// Função hash
 int hash(int valor, int tam){
     return valor % tam;
 }
 
+/* Função para a inserção de um elemento do vetor na 
+tabela com base na função hash e no método da sondagem 
+linear para lidar com as colisões */
 void inserir(int* Tabela, int valor, int tam_tabela){
     int indice = hash(valor, tam_tabela);
     while(Tabela[indice] != 0){
@@ -67,6 +80,8 @@ void inserir(int* Tabela, int valor, int tam_tabela){
     Tabela[indice] = valor;
 }
 
+/* Função para buscar valores na tabela a partir da 
+função hash e consultando os elementos adjacentes */
 int busca(int* Tabela, int valor, int tam){
     int indice = hash(valor, tam),
     inicial = indice;
@@ -76,10 +91,11 @@ int busca(int* Tabela, int valor, int tam){
         }
         indice = hash(indice + 1, tam);
         if (indice == inicial){
-            break; 
+            break;
         }
     }
     return -1;
+    // Retorna -1 se a busca foi mal sucedida
 }
 
 
@@ -88,7 +104,6 @@ int busca(int* Tabela, int valor, int tam){
 
 int Ordenacao(int* Produtos, int n){
     QuickSort(Produtos, 0, n-1); // Ordena usando o quicksort
-
     // Variável que conta o tamanho da sequência atual e 
     // outra que guarda o tamanho da maior sequência até então
     int contador = 1, maxseq = 1;
