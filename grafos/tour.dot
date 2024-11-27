@@ -1,0 +1,12 @@
+digraph ex {
+    EstacaoTrianonMasp -> CentroJundiai;
+    JardimRosimeire -> CentroJundiai;
+    EstacaoLuz -> CentroJundiai;
+    VilaArens -> Moema;
+    IME -> Moema;
+    Moema -> Moema;
+    CUASO -> BairroEngordadouro;
+    CentroJundiai -> BairroEngordadouro;
+    ParqueMorato -> ParqueMorato;
+    BairroEngordadouro -> EstacaoLuz;
+}
